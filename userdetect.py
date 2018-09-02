@@ -32,9 +32,9 @@ DOCUMENTATION = '''
 ---
 module: userdetect
 short_description: |
-    Detect if a user exists on a UNIX operations system.
+    Detect the existence of an user on UNIX operations system.
 description:
-    - Detect if a user exists on a UNIX operations system.
+    - Detect the existence of an user on UNIX operations system.
 
 author: "Josef Friedrich (@Josef-Friedrich)"
 options:
@@ -44,7 +44,7 @@ options:
 
     fallback:
         description:
-            - User to use instead if the user can’t detected.
+            - User to look for if the main user can’t be detected.
         default: root
 '''
 
@@ -83,7 +83,7 @@ def main():
             result = detect_user(module.params['fallback'])
             module.exit_json(**result)
         except KeyError:
-            module.fail_json(**{'msg': 'lol'})
+            module.fail_json(**{'msg': 'User can’t be found.'})
 
 
 
