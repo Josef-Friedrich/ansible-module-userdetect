@@ -22,21 +22,26 @@ ANSIBLE_METADATA = {'metadata_version': '0.1',
                     'supported_by': 'community'}
 
 
-DOCUMENTATION = """
+DOCUMENTATION = '''
 ---
 module: userdetect
-author: "Josef Friedrich (@Josef-Friedrich)"
-
-short_description: Detect if a user exists on a UNIX operations system.
+short_description: |
+    Detect if a user exists on a UNIX operations system.
 description:
-  - Detect if a user exists on a UNIX operations system.
-options:
-  path:
-    user:
-      - The name to the user.
-    required: true
+    - Detect if a user exists on a UNIX operations system.
 
-"""
+author: "Josef Friedrich (@Josef-Friedrich)"
+options:
+    user:
+        description:
+            - The name to the user.
+
+    fallback:
+        description:
+            - User to use instead if the user can’t detected.
+        default: root
+'''
+
 
 EXAMPLES = """
 
