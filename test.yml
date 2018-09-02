@@ -1,0 +1,18 @@
+---
+- hosts: all
+  tasks:
+    - name: Detect user “jf”
+      userdetect: user=jf
+      register: user
+    - debug: msg={{ user }}
+
+    - name: Detect user “lol”
+      userdetect: user=lol
+      register: user
+    - debug: msg={{ user }}
+
+    - name: Detect user “lol”
+      userdetect: user=lol
+                  fallback=troll
+      register: user
+    - debug: msg={{ user }}
