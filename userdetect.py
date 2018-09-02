@@ -74,7 +74,6 @@ def main():
         supports_check_mode=False,
     )
 
-
     try:
         result = detect_user(module.params['user'])
         module.exit_json(**result)
@@ -84,7 +83,6 @@ def main():
             module.exit_json(**result)
         except KeyError:
             module.fail_json(**{'msg': 'User can’t be found.'})
-
 
 
 if __name__ == '__main__':
