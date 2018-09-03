@@ -15,7 +15,7 @@ __metaclass__ = type
 class TestFunction(unittest.TestCase):
 
     @mock.patch("userdetect.AnsibleModule")
-    def test_mock(self, AnsibleModule):
+    def test_argument_spec(self, AnsibleModule):
         module = AnsibleModule.return_value
         module.params = {
             'user': 'root',
@@ -24,25 +24,23 @@ class TestFunction(unittest.TestCase):
         userdetect.main()
 
         expected = dict(
-                user=dict(required=True, type='raw'),
-                fallback=dict(required=False, type='str'),
+            user=dict(required=True, type='raw'),
+            fallback=dict(required=False, type='str'),
         )
 
         assert(mock.call(argument_spec=expected,
                supports_check_mode=False) == AnsibleModule.call_args)
 
 
-    # @mock.patch("userdetect.AnsibleModule")
-    # def test_delete(self, AnsibleModule):
-    #     module = AnsibleModule.return_value
-    #     module.params = {
-    #         'state': 'absent',
-    #         'path': '/tmp',
-    #         'mark': 'tmp',
-    #         'sdirs': sdirs
-    #     }
-    #     module.check_mode = False
-    #     shellmarks.main()
-    #
-    #     args = module.exit_json.call_args
-    #     self.assertEqual(mock.call(changed=False, msg='tmp : /tmp'), args)
+    @mock.patch("userdetect.AnsibleModule")
+    def test_single_user(self, AnsibleModule):
+        module = AnsibleModule.return_value
+        module.params = {
+            'user': 'root',
+        }
+        module.check_mode = False
+        userdetect.main()
+
+        args, kwargs = module.exit_json.call_args
+        self.assertEqual(kwargs['mode'], 'single')
+        self.assertEqual(kwargs['username'], 'root')
