@@ -40,7 +40,7 @@ author: "Josef Friedrich (@Josef-Friedrich)"
 options:
     user:
         description:
-            - The name to the user.
+            - The name of the user or a list of users
 
     fallback:
         description:
@@ -48,24 +48,50 @@ options:
         default: root
 '''
 
-
 EXAMPLES = """
+
+- name: Detect user “jf”
+  userdetect: user=jf
+  register: user
+
+- name: Detect fallback user “root”.
+  userdetect: user=lol
+              fallback=root
+  register: user
+
+- name: Detect users as a list
+  userdetect:
+    user:
+      - jf
+      - root
+  register: user
 
 """
 
 
+EXAMPLES = '''
+- name: Ensure foo is installed
+  modulename:
+    name: foo
+    state: present
+'''
+
 def detect_user(name):
+    result = dict()
+    result['name'] = name
+    result['exists'] = False
+
     try:
-        result = dict()
         p = pwd.getpwnam(name)
-        result['name'] = p.pw_name
+        result['exists'] = True
         result['uid'] = p.pw_uid
         result['gid'] = p.pw_gid
         result['home'] = p.pw_dir
         result['shell'] = p.pw_shell
-        return result
     except KeyError:
-        return None
+        pass
+
+    return result
 
 
 def main():
@@ -81,25 +107,16 @@ def main():
     if isinstance(module.params['user'], (list,)):
         for username in module.params['user']:
             user = detect_user(username)
-            if user:
-                users.append(user)
-
-        if users:
-            module.exit_json(**{'users': users})
-        else:
-            module.fail_json(**{'msg': 'Users can’t be found.'})
+            users.append(user)
+        module.exit_json(**{'users': users})
 
     result = detect_user(module.params['user'])
-    if result:
-        module.exit_json(**result)
-    elif 'fallback' in module.params and module.params['fallback']:
+
+    if not result['exists'] and 'fallback' in module.params and \
+       module.params['fallback']:
         result = detect_user(module.params['fallback'])
-        if result:
-            module.exit_json(**result)
-        else:
-            module.fail_json(**{'msg': 'User can’t be found.'})
-    else:
-        module.fail_json(**{'msg': 'User can’t be found.'})
+
+    module.exit_json(**result)
 
 
 if __name__ == '__main__':
