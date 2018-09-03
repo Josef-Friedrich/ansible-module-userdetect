@@ -76,6 +76,7 @@ EXAMPLES = '''
     state: present
 '''
 
+
 def detect_user(name):
     result = dict()
     result['name'] = name
@@ -103,14 +104,23 @@ def main():
         supports_check_mode=False,
     )
 
-    users = []
+    existent = []
+    non_existent = []
+    all = []
     if isinstance(module.params['user'], (list,)):
         for username in module.params['user']:
             user = detect_user(username)
-            users.append(user)
-        module.exit_json(**{'users': users})
+            if user['exists']:
+                existent.append(user)
+            else:
+                non_existent.append(user)
+            all.append(user)
+        module.exit_json(mode='multi', existent=existent,
+                         non_existent=non_existent,
+                         all=non_existent)
 
     result = detect_user(module.params['user'])
+    result['mode'] = 'single'
 
     if not result['exists'] and 'fallback' in module.params and \
        module.params['fallback']:
