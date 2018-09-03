@@ -74,7 +74,7 @@ EXAMPLES = """
 
 def detect_user(name):
     result = dict()
-    result['name'] = name
+    result['username'] = name
     result['exists'] = False
 
     try:
