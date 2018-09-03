@@ -6,13 +6,38 @@
       register: user
     - debug: msg={{ user }}
 
-    - name: Detect user “lol”
+    - name: User “lol” can’t be found.
       userdetect: user=lol
+      register: user
+      ignore_errors: yes
+    - debug: msg={{ user }}
+
+    - name: Detect fallback user “root”.
+      userdetect: user=lol
+                  fallback=root
       register: user
     - debug: msg={{ user }}
 
-    - name: Detect user “lol”
+    - name: User and fallback user can’t be found.
       userdetect: user=lol
                   fallback=troll
+      register: user
+      ignore_errors: yes
+    - debug: msg={{ user }}
+
+    - name: Detect users as a list
+      userdetect:
+        user:
+          - jf
+          - root
+      register: user
+    - debug: msg={{ user }}
+
+    - name: Can’t detect users as a list
+      userdetect:
+        user:
+          - lol
+          - troll
+      ignore_errors: yes
       register: user
     - debug: msg={{ user }}

@@ -55,6 +55,7 @@ EXAMPLES = """
 
 
 def detect_user(name):
+    try:
         result = dict()
         p = pwd.getpwnam(name)
         result['name'] = p.pw_name
@@ -63,26 +64,42 @@ def detect_user(name):
         result['home'] = p.pw_dir
         result['shell'] = p.pw_shell
         return result
+    except KeyError:
+        return None
 
 
 def main():
     module = AnsibleModule(
         argument_spec=dict(
-            user=dict(required=True),
-            fallback=dict(required=False, default='root'),
+            user=dict(required=True, type='raw'),
+            fallback=dict(required=False, type='str'),
         ),
         supports_check_mode=False,
     )
 
-    try:
-        result = detect_user(module.params['user'])
+    users = []
+    if isinstance(module.params['user'], (list,)):
+        for username in module.params['user']:
+            user = detect_user(username)
+            if user:
+                users.append(user)
+
+        if users:
+            module.exit_json(**{'users': users})
+        else:
+            module.fail_json(**{'msg': 'Users can’t be found.'})
+
+    result = detect_user(module.params['user'])
+    if result:
         module.exit_json(**result)
-    except KeyError:
-        try:
-            result = detect_user(module.params['fallback'])
+    elif 'fallback' in module.params and module.params['fallback']:
+        result = detect_user(module.params['fallback'])
+        if result:
             module.exit_json(**result)
-        except KeyError:
+        else:
             module.fail_json(**{'msg': 'User can’t be found.'})
+    else:
+        module.fail_json(**{'msg': 'User can’t be found.'})
 
 
 if __name__ == '__main__':
