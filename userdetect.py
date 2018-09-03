@@ -32,9 +32,9 @@ DOCUMENTATION = '''
 ---
 module: userdetect
 short_description: |
-    Detect the existence of an user on UNIX operations system.
+    Detect the existence of user(s) on UNIX operation systems.
 description:
-    - Detect the existence of an user on UNIX operations system.
+    - Detect the existence of user(s) on UNIX operation systems.
 
 author: "Josef Friedrich (@Josef-Friedrich)"
 options:
@@ -45,7 +45,6 @@ options:
     fallback:
         description:
             - User to look for if the main user can’t be detected.
-        default: root
 '''
 
 EXAMPLES = """
