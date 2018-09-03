@@ -66,6 +66,9 @@ EXAMPLES = """
       - root
   register: user
 
+- name: Detect users as a comma separated list
+  userdetect: user=jf,root
+  register: user
 """
 
 
@@ -99,8 +102,15 @@ def main():
     existent = []
     non_existent = []
     all = []
+
+    userlist = None
     if isinstance(module.params['user'], (list,)):
-        for username in module.params['user']:
+        userlist = module.params['user']
+    elif ',' in module.params['user']:
+        userlist = module.params['user'].split(',')
+
+    if userlist:
+        for username in userlist:
             user = detect_user(username)
             if user['exists']:
                 existent.append(user)

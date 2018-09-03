@@ -26,6 +26,11 @@
           - root
       register: user
 
+    - name: Detect users as a list, separated by commas
+      userdetect:
+        user: jf,root
+      register: user
+
     - name: Can’t detect users as a list
       userdetect:
         user:
