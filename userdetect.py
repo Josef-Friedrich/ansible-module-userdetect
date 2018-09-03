@@ -69,14 +69,6 @@ EXAMPLES = """
 """
 
 
-EXAMPLES = '''
-- name: Ensure foo is installed
-  modulename:
-    name: foo
-    state: present
-'''
-
-
 def detect_user(name):
     result = dict()
     result['name'] = name
