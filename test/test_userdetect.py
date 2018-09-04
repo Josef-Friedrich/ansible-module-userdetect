@@ -19,6 +19,7 @@ StructPasswd = collections.namedtuple(
      'pw_shell']
 )
 
+
 def create_struct_passwd(name, uid, gid, home, shell):
     return StructPasswd(name, 'x', uid, gid, 'gecos', home, shell)
 
@@ -33,6 +34,7 @@ def mock_userdetect(params, side_effect):
             userdetect.main()
             args, kwargs = module.exit_json.call_args
             return kwargs
+
 
 class TestFunction(unittest.TestCase):
 

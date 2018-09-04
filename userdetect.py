@@ -186,7 +186,6 @@ def main():
         result['mode'] = 'single'
         result['fallback'] = True
 
-
     module.exit_json(**result)
 
 
