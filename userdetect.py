@@ -34,14 +34,16 @@ module: userdetect
 short_description: |
     Detect the existence of user(s) on UNIX operation systems.
 description:
-    - Detect the existence of user(s) on UNIX operation systems.
+    - Detect the existence of user(s) on UNIX operation systems. This module
+      only reports about the existence of users. It doesn’t change any data.
+    - Use the register key to catch the returned informatins about the users.
 
 author: "Josef Friedrich (@Josef-Friedrich)"
 options:
     user:
         description:
-            - The name of the user or a list of users
-
+            - The name of the user or a list of users. Users can be specified
+              as a comma separted list (user1,user2) or as a YAML list.
     fallback:
         description:
             - User to look for if the main user can’t be detected.

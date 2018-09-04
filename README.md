@@ -4,6 +4,9 @@
 > USERDETECT    (userdetect.py)
 
         Detect the existence of user(s) on UNIX operation systems.
+        This module only reports about the existence of users. It
+        doesn’t change any data. Use the register key to catch the
+        returned informatins about the users.
 
 OPTIONS (= is mandatory):
 
@@ -12,7 +15,9 @@ OPTIONS (= is mandatory):
         [Default: (null)]
 
 - user
-        The name of the user or a list of users
+        The name of the user or a list of users. Users can be
+        specified as a comma separted list (user1,user2) or as a YAML
+        list.
         [Default: (null)]
 
 
@@ -43,6 +48,64 @@ EXAMPLES:
 - name: Detect users as a comma separated list
   userdetect: user=jf,root
   register: user
+
+RETURN VALUES:
+
+
+username:
+    description: The name of the user
+    returned: always
+    type: string
+    sample: root
+exists:
+    description: Indicates if the user exists
+    returned: always
+    type: boolean
+    sample: True
+fallback:
+    description: Indicates if the user is a the fallback user or not.
+    returned: If the user exists
+    type: boolean
+    sample: True
+uid:
+    description: The user ID
+    returned: If the user exists
+    type: integer
+    sample: 1000
+gid:
+    description: The group ID
+    returned: If the user exists
+    type: integer
+    sample: 1000
+home:
+    description: The path of the home folder
+    returned: If the user exists
+    type: string
+    sample: /home/jf
+shell:
+    description: The absoltue path of the shell the user uses.
+    returned: If the user exists
+    type: string
+    sample: /bin/bash
+
+all:
+    description: |
+        A list of all users containing a dictionary with the keys “username”,
+        “exists”, “uid”, “gid”, “home”, “shell”.
+    returned: In multi mode
+    type: list
+existent:
+    description: |
+        A list of all existing users containing a dictionary with the keys
+        “username”, “exists”, “uid”, “gid”, “home”, “shell”.
+    returned: In multi mode
+    type: list
+non_existent:
+    description: |
+        A list of all non existing users containing a dictionary with the
+        keys “username”, “exists”, “uid”, “gid”, “home”, “shell”.
+    returned: In multi mode
+    type: list
 ```
 
 # Development
