@@ -112,15 +112,43 @@ class TestFunction(unittest.TestCase):
         self.assertNotIn('home', kwargs)
         self.assertNotIn('shell', kwargs)
 
-    # def test_multi_existent(self):
-    #     kwargs = mock_userdetect(
-    #         {'user': 'jf,root'},
-    #         [
-    #             create_struct_passwd('jf', 1000, 1000, '/home/jf',
-    #                                  '/bin/sh'),
-    #             create_struct_passwd('root', 2, 3, '/root', '/bin/sh'),
-    #             create_struct_passwd('root', 2, 3, '/root', '/bin/sh'),
-    #             create_struct_passwd('root', 2, 3, '/root', '/bin/sh'),
-    #         ]
-    #     )
-    #     self.assertEqual(kwargs['username'], 'jf')
+    def test_multi_existent(self):
+        kwargs = mock_userdetect(
+            {'user': 'jf,root'},
+            [
+                create_struct_passwd('jf', 1000, 1000, '/home/jf',
+                                     '/bin/sh'),
+                create_struct_passwd('root', 2, 3, '/root', '/bin/sh'),
+            ]
+        )
+        self.assertEqual(kwargs['mode'], 'multi')
+        self.assertEqual(len(kwargs['all']), 2)
+        self.assertEqual(len(kwargs['existent']), 2)
+        self.assertEqual(len(kwargs['non_existent']), 0)
+
+    def test_multi_existent_non_existent(self):
+        kwargs = mock_userdetect(
+            {'user': 'jf,root'},
+            [
+                create_struct_passwd('jf', 1000, 1000, '/home/jf',
+                                     '/bin/sh'),
+                KeyError(),
+            ]
+        )
+        self.assertEqual(kwargs['mode'], 'multi')
+        self.assertEqual(len(kwargs['all']), 2)
+        self.assertEqual(len(kwargs['existent']), 1)
+        self.assertEqual(len(kwargs['non_existent']), 1)
+
+    def test_multi_non_existent(self):
+        kwargs = mock_userdetect(
+            {'user': 'jf,root'},
+            [
+                KeyError(),
+                KeyError(),
+            ]
+        )
+        self.assertEqual(kwargs['mode'], 'multi')
+        self.assertEqual(len(kwargs['all']), 2)
+        self.assertEqual(len(kwargs['existent']), 0)
+        self.assertEqual(len(kwargs['non_existent']), 2)

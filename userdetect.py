@@ -175,6 +175,9 @@ def main():
         module.exit_json(mode='multi', existent=existent,
                          non_existent=non_existent,
                          all=all)
+        # TODO: Remove return. It is not necessary. It is only useful in the
+        # tests.
+        return
 
     result = detect_user(module.params['user'])
     result['mode'] = 'single'
@@ -187,6 +190,9 @@ def main():
         result['fallback'] = True
 
     module.exit_json(**result)
+    # TODO: Remove return. It is not necessary. It is only useful in the
+    # tests.
+    return
 
 
 if __name__ == '__main__':
