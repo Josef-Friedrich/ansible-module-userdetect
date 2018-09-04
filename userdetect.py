@@ -174,7 +174,7 @@ def main():
             all.append(user)
         module.exit_json(mode='multi', existent=existent,
                          non_existent=non_existent,
-                         all=non_existent)
+                         all=all)
 
     result = detect_user(module.params['user'])
     result['mode'] = 'single'
