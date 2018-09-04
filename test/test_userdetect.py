@@ -111,3 +111,16 @@ class TestFunction(unittest.TestCase):
         self.assertNotIn('gid', kwargs)
         self.assertNotIn('home', kwargs)
         self.assertNotIn('shell', kwargs)
+
+    # def test_multi_existent(self):
+    #     kwargs = mock_userdetect(
+    #         {'user': 'jf,root'},
+    #         [
+    #             create_struct_passwd('jf', 1000, 1000, '/home/jf',
+    #                                  '/bin/sh'),
+    #             create_struct_passwd('root', 2, 3, '/root', '/bin/sh'),
+    #             create_struct_passwd('root', 2, 3, '/root', '/bin/sh'),
+    #             create_struct_passwd('root', 2, 3, '/root', '/bin/sh'),
+    #         ]
+    #     )
+    #     self.assertEqual(kwargs['username'], 'jf')
