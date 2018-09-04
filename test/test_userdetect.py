@@ -125,6 +125,8 @@ class TestFunction(unittest.TestCase):
         self.assertEqual(len(kwargs['all']), 2)
         self.assertEqual(len(kwargs['existent']), 2)
         self.assertEqual(len(kwargs['non_existent']), 0)
+        self.assertEqual(kwargs['all'][0]['username'], 'jf')
+        self.assertEqual(kwargs['all'][1]['username'], 'root')
 
     def test_multi_existent_non_existent(self):
         kwargs = mock_userdetect(
@@ -139,6 +141,8 @@ class TestFunction(unittest.TestCase):
         self.assertEqual(len(kwargs['all']), 2)
         self.assertEqual(len(kwargs['existent']), 1)
         self.assertEqual(len(kwargs['non_existent']), 1)
+        self.assertEqual(kwargs['existent'][0]['username'], 'jf')
+        self.assertEqual(kwargs['non_existent'][0]['username'], 'root')
 
     def test_multi_non_existent(self):
         kwargs = mock_userdetect(
@@ -152,3 +156,5 @@ class TestFunction(unittest.TestCase):
         self.assertEqual(len(kwargs['all']), 2)
         self.assertEqual(len(kwargs['existent']), 0)
         self.assertEqual(len(kwargs['non_existent']), 2)
+        self.assertEqual(kwargs['non_existent'][0]['username'], 'jf')
+        self.assertEqual(kwargs['non_existent'][1]['username'], 'root')
