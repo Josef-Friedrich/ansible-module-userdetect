@@ -48,7 +48,6 @@ options:
 '''
 
 EXAMPLES = """
-
 - name: Detect user “jf”
   userdetect: user=jf
   register: user
@@ -69,6 +68,58 @@ EXAMPLES = """
   userdetect: user=jf,root
   register: user
 """
+
+RETURN = '''
+username:
+    description: The name of the user
+    returned: always
+    type: string
+    sample: root
+exists:
+    description: Indicates if the user exists
+    returned: always
+    type: boolean
+    sample: True
+uid:
+    description: The user ID
+    returned: If the user exists
+    type: integer
+    sample: 1000
+gid:
+    description: The group ID
+    returned: If the user exists
+    type: integer
+    sample: 1000
+home:
+    description: The path of the home folder
+    returned: If the user exists
+    type: string
+    sample: /home/jf
+shell:
+    description: The absoltue path of the shell the user uses.
+    returned: If the user exists
+    type: string
+    sample: /bin/bash
+
+all:
+    description: |
+        A list of all users containing a dictionary with the keys “username”,
+        “exists”, “uid”, “gid”, “home”, “shell”.
+    returned: In multi mode
+    type: list
+existent:
+    description: |
+        A list of all existing users containing a dictionary with the keys
+        “username”, “exists”, “uid”, “gid”, “home”, “shell”.
+    returned: In multi mode
+    type: list
+non_existent:
+    description: |
+        A list of all non existing users containing a dictionary with the
+        keys “username”, “exists”, “uid”, “gid”, “home”, “shell”.
+    returned: In multi mode
+    type: list
+'''
 
 
 def detect_user(name):
