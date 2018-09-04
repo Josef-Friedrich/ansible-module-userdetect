@@ -59,6 +59,7 @@ class TestFunction(unittest.TestCase):
             [create_struct_passwd('root', 2, 3, '/root', '/bin/sh')]
         )
         self.assertEqual(kwargs['mode'], 'single')
+        self.assertEqual(kwargs['fallback'], False)
         self.assertEqual(kwargs['exists'], True)
         self.assertEqual(kwargs['username'], 'root')
         self.assertEqual(kwargs['uid'], 2)
@@ -68,6 +69,39 @@ class TestFunction(unittest.TestCase):
 
     def test_single_user_non_existent(self):
         kwargs = mock_userdetect({'user': 'root'}, KeyError())
+        self.assertEqual(kwargs['mode'], 'single')
+        self.assertEqual(kwargs['exists'], False)
+        self.assertEqual(kwargs['username'], 'root')
+        self.assertNotIn('uid', kwargs)
+        self.assertNotIn('gid', kwargs)
+        self.assertNotIn('home', kwargs)
+        self.assertNotIn('shell', kwargs)
+
+    def test_single_fallback_existent(self):
+        kwargs = mock_userdetect(
+            {'user': 'jf', 'fallback': 'root'},
+            [
+                KeyError(),
+                create_struct_passwd('root', 2, 3, '/root', '/bin/sh'),
+            ]
+        )
+        self.assertEqual(kwargs['mode'], 'single')
+        self.assertEqual(kwargs['fallback'], True)
+        self.assertEqual(kwargs['exists'], True)
+        self.assertEqual(kwargs['username'], 'root')
+        self.assertEqual(kwargs['uid'], 2)
+        self.assertEqual(kwargs['gid'], 3)
+        self.assertEqual(kwargs['home'], '/root')
+        self.assertEqual(kwargs['shell'], '/bin/sh')
+
+    def test_single_fallback_non_existent(self):
+        kwargs = mock_userdetect(
+            {'user': 'jf', 'fallback': 'root'},
+            [
+                KeyError(),
+                KeyError(),
+            ]
+        )
         self.assertEqual(kwargs['mode'], 'single')
         self.assertEqual(kwargs['exists'], False)
         self.assertEqual(kwargs['username'], 'root')

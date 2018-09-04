@@ -80,6 +80,11 @@ exists:
     returned: always
     type: boolean
     sample: True
+fallback:
+    description: Indicates if the user is a the fallback user or not.
+    returned: If the user exists
+    type: boolean
+    sample: True
 uid:
     description: The user ID
     returned: If the user exists
@@ -173,10 +178,14 @@ def main():
 
     result = detect_user(module.params['user'])
     result['mode'] = 'single'
+    result['fallback'] = False
 
     if not result['exists'] and 'fallback' in module.params and \
        module.params['fallback']:
         result = detect_user(module.params['fallback'])
+        result['mode'] = 'single'
+        result['fallback'] = True
+
 
     module.exit_json(**result)
 
