@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/Josef-Friedrich/ansible-module-userdetect.svg?branch=master)](https://travis-ci.org/Josef-Friedrich/ansible-module-userdetect)
-
 ```
 > USERDETECT    (userdetect.py)
 
