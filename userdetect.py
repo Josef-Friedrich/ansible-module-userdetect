@@ -17,18 +17,22 @@
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
+
+import pwd
 
 # import module snippets
 from ansible.module_utils.basic import AnsibleModule
-import pwd
 
-ANSIBLE_METADATA = {'metadata_version': '0.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
+ANSIBLE_METADATA = {
+    "metadata_version": "0.1",
+    "status": ["preview"],
+    "supported_by": "community",
+}
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: userdetect
 short_description: |
@@ -47,7 +51,7 @@ options:
     fallback:
         description:
             - User to look for if the main user can’t be detected.
-'''
+"""
 
 EXAMPLES = """
 - name: Detect user “jf”
@@ -71,7 +75,7 @@ EXAMPLES = """
   register: user
 """
 
-RETURN = '''
+RETURN = """
 username:
     description: The name of the user
     returned: always
@@ -126,21 +130,21 @@ non_existent:
         keys “username”, “exists”, “uid”, “gid”, “home”, “shell”.
     returned: In multi mode
     type: list
-'''
+"""
 
 
 def detect_user(name):
     result = dict()
-    result['username'] = name
-    result['exists'] = False
+    result["username"] = name
+    result["exists"] = False
 
     try:
         p = pwd.getpwnam(name)
-        result['exists'] = True
-        result['uid'] = p.pw_uid
-        result['gid'] = p.pw_gid
-        result['home'] = p.pw_dir
-        result['shell'] = p.pw_shell
+        result["exists"] = True
+        result["uid"] = p.pw_uid
+        result["gid"] = p.pw_gid
+        result["home"] = p.pw_dir
+        result["shell"] = p.pw_shell
     except KeyError:
         pass
 
@@ -150,8 +154,8 @@ def detect_user(name):
 def main():
     module = AnsibleModule(
         argument_spec=dict(
-            user=dict(required=True, type='raw'),
-            fallback=dict(required=False, type='str'),
+            user=dict(required=True, type="raw"),
+            fallback=dict(required=False, type="str"),
         ),
         supports_check_mode=False,
     )
@@ -161,35 +165,38 @@ def main():
     all = []
 
     userlist = None
-    if isinstance(module.params['user'], (list,)):
-        userlist = module.params['user']
-    elif ',' in module.params['user']:
-        userlist = module.params['user'].split(',')
+    if isinstance(module.params["user"], (list,)):
+        userlist = module.params["user"]
+    elif "," in module.params["user"]:
+        userlist = module.params["user"].split(",")
 
     if userlist:
         for username in userlist:
             user = detect_user(username)
-            if user['exists']:
+            if user["exists"]:
                 existent.append(user)
             else:
                 non_existent.append(user)
             all.append(user)
-        module.exit_json(mode='multi', existent=existent,
-                         non_existent=non_existent,
-                         all=all)
+        module.exit_json(
+            mode="multi", existent=existent, non_existent=non_existent, all=all
+        )
         # TODO: Remove return. It is not necessary. It is only useful in the
         # tests.
         return
 
-    result = detect_user(module.params['user'])
-    result['mode'] = 'single'
-    result['fallback'] = False
+    result = detect_user(module.params["user"])
+    result["mode"] = "single"
+    result["fallback"] = False
 
-    if not result['exists'] and 'fallback' in module.params and \
-       module.params['fallback']:
-        result = detect_user(module.params['fallback'])
-        result['mode'] = 'single'
-        result['fallback'] = True
+    if (
+        not result["exists"]
+        and "fallback" in module.params
+        and module.params["fallback"]
+    ):
+        result = detect_user(module.params["fallback"])
+        result["mode"] = "single"
+        result["fallback"] = True
 
     module.exit_json(**result)
     # TODO: Remove return. It is not necessary. It is only useful in the
@@ -197,5 +204,5 @@ def main():
     return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
