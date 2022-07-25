@@ -1,7 +1,5 @@
 import collections
-from unittest import mock
-
-from ansible.compat.tests import unittest
+from unittest import TestCase, mock
 
 import userdetect
 
@@ -14,7 +12,7 @@ StructPasswd = collections.namedtuple(
 )
 
 
-def create_struct_passwd(name, uid, gid, home, shell):
+def create_struct_passwd(name: str, uid: int, gid: int, home: str, shell: str):
     return StructPasswd(name, "x", uid, gid, "gecos", home, shell)
 
 
@@ -30,7 +28,7 @@ def mock_userdetect(params, side_effect):
             return kwargs
 
 
-class TestFunction(unittest.TestCase):
+class TestFunction(TestCase):
     @mock.patch("userdetect.AnsibleModule")
     def test_argument_spec(self, AnsibleModule):
         module = AnsibleModule.return_value

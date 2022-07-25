@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 # (c) 2018, Josef Friedrich <josef@friedrich.rocks>
 #
@@ -16,11 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
 import pwd
+from typing import List, TypedDict
 
 # import module snippets
 from ansible.module_utils.basic import AnsibleModule
@@ -133,8 +132,17 @@ non_existent:
 """
 
 
-def detect_user(name):
-    result = dict()
+class User(TypedDict, total=False):
+    username: str
+    exists: bool
+    uid: int
+    gid: int
+    home: str
+    shell: str
+
+
+def detect_user(name: str):
+    result: User = {}
     result["username"] = name
     result["exists"] = False
 
@@ -160,8 +168,8 @@ def main():
         supports_check_mode=False,
     )
 
-    existent = []
-    non_existent = []
+    existent: List[User] = []
+    non_existent: List[User] = []
     all = []
 
     userlist = None
