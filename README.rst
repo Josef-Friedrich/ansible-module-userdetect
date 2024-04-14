@@ -1,7 +1,6 @@
 ansible-module-userdetect
 =========================
 
-
 :: 
 
     > USERDETECT    (/etc/ansible/library/userdetect.py)
@@ -15,14 +14,13 @@ ansible-module-userdetect
 
     - fallback
             User to look for if the main user can’t be detected.
-            [Default: (null)]
+            default: null
 
     - user
             The name of the user or a list of users. Users can be
             specified as a comma separted list (user1,user2) or as a YAML
             list.
-            [Default: (null)]
-
+            default: null
 
     AUTHOR: Josef Friedrich (@Josef-Friedrich)
 
@@ -31,7 +29,6 @@ ansible-module-userdetect
       status:
       - preview
       supported_by: community
-
 
     EXAMPLES:
 
@@ -55,49 +52,39 @@ ansible-module-userdetect
       userdetect: user=jf,root
       register: user
 
-
     RETURN VALUES:
     - all
             A list of all users containing a dictionary with the keys
             “username”, “exists”, “uid”, “gid”, “home”, “shell”.
-
             returned: In multi mode
             type: list
 
     - existent
             A list of all existing users containing a dictionary with the
             keys “username”, “exists”, “uid”, “gid”, “home”, “shell”.
-
             returned: In multi mode
             type: list
 
     - exists
             Indicates if the user exists
-
             returned: always
             sample: true
-            
             type: boolean
 
     - fallback
             Indicates if the user is a the fallback user or not.
-
             returned: If the user exists
             sample: true
-            
             type: boolean
 
     - gid
             The group ID
-
             returned: If the user exists
             sample: 1000
-            
             type: integer
 
     - home
             The path of the home folder
-
             returned: If the user exists
             sample: /home/jf
             type: string
@@ -105,33 +92,26 @@ ansible-module-userdetect
     - non_existent
             A list of all non existing users containing a dictionary with
             the keys “username”, “exists”, “uid”, “gid”, “home”, “shell”.
-
             returned: In multi mode
             type: list
 
     - shell
             The absoltue path of the shell the user uses.
-
             returned: If the user exists
             sample: /bin/bash
             type: string
 
     - uid
             The user ID
-
             returned: If the user exists
             sample: 1000
-            
             type: integer
 
     - username
             The name of the user
-
             returned: always
             sample: root
             type: string
-
-
 
 Development
 ===========

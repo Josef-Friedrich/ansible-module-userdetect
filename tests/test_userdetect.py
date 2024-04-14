@@ -1,22 +1,36 @@
-import collections
-from unittest import TestCase, mock
+from __future__ import annotations
+
+from typing import NamedTuple, Union
+from unittest import mock
 
 import userdetect
+from userdetect import ModuleParams
 
 __metaclass__ = type
 
 
-StructPasswd = collections.namedtuple(
-    "struct_passwd",
-    ["pw_name", "pw_passwd", "pw_uid", "pw_gid", "pw_gecos", "pw_dir", "pw_shell"],
-)
+class StructPasswd(NamedTuple):
+    pw_name: str
+    pw_passwd: str
+    pw_uid: int
+    pw_gid: int
+    pw_gecos: str
+    pw_dir: str
+    pw_shell: str
 
 
-def create_struct_passwd(name: str, uid: int, gid: int, home: str, shell: str):
+def create_struct_passwd(
+    name: str, uid: int, gid: int, home: str, shell: str
+) -> StructPasswd:
     return StructPasswd(name, "x", uid, gid, "gecos", home, shell)
 
 
-def mock_userdetect(params, side_effect):
+SideEffect = Union[StructPasswd, KeyError]
+
+
+def mock_userdetect(
+    params: ModuleParams, side_effect: Union[SideEffect, list[SideEffect]]
+):
     with mock.patch("userdetect.AnsibleModule") as AnsibleModule:
         with mock.patch("userdetect.pwd.getpwnam") as getpwnam:
             module = AnsibleModule.return_value
@@ -24,13 +38,13 @@ def mock_userdetect(params, side_effect):
             module.check_mode = False
             getpwnam.side_effect = side_effect
             userdetect.main()
-            args, kwargs = module.exit_json.call_args
+            _, kwargs = module.exit_json.call_args
             return kwargs
 
 
-class TestFunction(TestCase):
+class TestFunction:
     @mock.patch("userdetect.AnsibleModule")
-    def test_argument_spec(self, AnsibleModule):
+    def test_argument_spec(self, AnsibleModule: mock.MagicMock):
         module = AnsibleModule.return_value
         module.params = {
             "user": "root",
@@ -48,30 +62,30 @@ class TestFunction(TestCase):
             == AnsibleModule.call_args
         )
 
-    def test_single_user_existent(self):
+    def test_single_user_existent(self) -> None:
         kwargs = mock_userdetect(
             {"user": "root"}, [create_struct_passwd("root", 2, 3, "/root", "/bin/sh")]
         )
-        self.assertEqual(kwargs["mode"], "single")
-        self.assertEqual(kwargs["fallback"], False)
-        self.assertEqual(kwargs["exists"], True)
-        self.assertEqual(kwargs["username"], "root")
-        self.assertEqual(kwargs["uid"], 2)
-        self.assertEqual(kwargs["gid"], 3)
-        self.assertEqual(kwargs["home"], "/root")
-        self.assertEqual(kwargs["shell"], "/bin/sh")
+        assert kwargs["mode"] == "single"
+        assert not kwargs["fallback"]
+        assert kwargs["exists"]
+        assert kwargs["username"] == "root"
+        assert kwargs["uid"] == 2
+        assert kwargs["gid"] == 3
+        assert kwargs["home"] == "/root"
+        assert kwargs["shell"] == "/bin/sh"
 
-    def test_single_user_non_existent(self):
+    def test_single_user_non_existent(self) -> None:
         kwargs = mock_userdetect({"user": "root"}, KeyError())
-        self.assertEqual(kwargs["mode"], "single")
-        self.assertEqual(kwargs["exists"], False)
-        self.assertEqual(kwargs["username"], "root")
-        self.assertNotIn("uid", kwargs)
-        self.assertNotIn("gid", kwargs)
-        self.assertNotIn("home", kwargs)
-        self.assertNotIn("shell", kwargs)
+        assert kwargs["mode"] == "single"
+        assert not kwargs["exists"]
+        assert kwargs["username"] == "root"
+        assert "uid" not in kwargs
+        assert "gid" not in kwargs
+        assert "home" not in kwargs
+        assert "shell" not in kwargs
 
-    def test_single_fallback_existent(self):
+    def test_single_fallback_existent(self) -> None:
         kwargs = mock_userdetect(
             {"user": "jf", "fallback": "root"},
             [
@@ -79,16 +93,16 @@ class TestFunction(TestCase):
                 create_struct_passwd("root", 2, 3, "/root", "/bin/sh"),
             ],
         )
-        self.assertEqual(kwargs["mode"], "single")
-        self.assertEqual(kwargs["fallback"], True)
-        self.assertEqual(kwargs["exists"], True)
-        self.assertEqual(kwargs["username"], "root")
-        self.assertEqual(kwargs["uid"], 2)
-        self.assertEqual(kwargs["gid"], 3)
-        self.assertEqual(kwargs["home"], "/root")
-        self.assertEqual(kwargs["shell"], "/bin/sh")
+        assert kwargs["mode"] == "single"
+        assert kwargs["fallback"]
+        assert kwargs["exists"]
+        assert kwargs["username"] == "root"
+        assert kwargs["uid"] == 2
+        assert kwargs["gid"] == 3
+        assert kwargs["home"] == "/root"
+        assert kwargs["shell"] == "/bin/sh"
 
-    def test_single_fallback_non_existent(self):
+    def test_single_fallback_non_existent(self) -> None:
         kwargs = mock_userdetect(
             {"user": "jf", "fallback": "root"},
             [
@@ -96,15 +110,15 @@ class TestFunction(TestCase):
                 KeyError(),
             ],
         )
-        self.assertEqual(kwargs["mode"], "single")
-        self.assertEqual(kwargs["exists"], False)
-        self.assertEqual(kwargs["username"], "root")
-        self.assertNotIn("uid", kwargs)
-        self.assertNotIn("gid", kwargs)
-        self.assertNotIn("home", kwargs)
-        self.assertNotIn("shell", kwargs)
+        assert kwargs["mode"] == "single"
+        assert not kwargs["exists"]
+        assert kwargs["username"] == "root"
+        assert "uid" not in kwargs
+        assert "gid" not in kwargs
+        assert "home" not in kwargs
+        assert "shell" not in kwargs
 
-    def test_multi_existent(self):
+    def test_multi_existent(self) -> None:
         kwargs = mock_userdetect(
             {"user": "jf,root"},
             [
@@ -112,14 +126,14 @@ class TestFunction(TestCase):
                 create_struct_passwd("root", 2, 3, "/root", "/bin/sh"),
             ],
         )
-        self.assertEqual(kwargs["mode"], "multi")
-        self.assertEqual(len(kwargs["all"]), 2)
-        self.assertEqual(len(kwargs["existent"]), 2)
-        self.assertEqual(len(kwargs["non_existent"]), 0)
-        self.assertEqual(kwargs["all"][0]["username"], "jf")
-        self.assertEqual(kwargs["all"][1]["username"], "root")
+        assert kwargs["mode"] == "multi"
+        assert len(kwargs["all"]) == 2
+        assert len(kwargs["existent"]) == 2
+        assert len(kwargs["non_existent"]) == 0
+        assert kwargs["all"][0]["username"] == "jf"
+        assert kwargs["all"][1]["username"] == "root"
 
-    def test_multi_existent_non_existent(self):
+    def test_multi_existent_non_existent(self) -> None:
         kwargs = mock_userdetect(
             {"user": "jf,root"},
             [
@@ -127,14 +141,14 @@ class TestFunction(TestCase):
                 KeyError(),
             ],
         )
-        self.assertEqual(kwargs["mode"], "multi")
-        self.assertEqual(len(kwargs["all"]), 2)
-        self.assertEqual(len(kwargs["existent"]), 1)
-        self.assertEqual(len(kwargs["non_existent"]), 1)
-        self.assertEqual(kwargs["existent"][0]["username"], "jf")
-        self.assertEqual(kwargs["non_existent"][0]["username"], "root")
+        assert kwargs["mode"] == "multi"
+        assert len(kwargs["all"]) == 2
+        assert len(kwargs["existent"]) == 1
+        assert len(kwargs["non_existent"]) == 1
+        assert kwargs["existent"][0]["username"] == "jf"
+        assert kwargs["non_existent"][0]["username"] == "root"
 
-    def test_multi_non_existent(self):
+    def test_multi_non_existent(self) -> None:
         kwargs = mock_userdetect(
             {"user": "jf,root"},
             [
@@ -142,9 +156,9 @@ class TestFunction(TestCase):
                 KeyError(),
             ],
         )
-        self.assertEqual(kwargs["mode"], "multi")
-        self.assertEqual(len(kwargs["all"]), 2)
-        self.assertEqual(len(kwargs["existent"]), 0)
-        self.assertEqual(len(kwargs["non_existent"]), 2)
-        self.assertEqual(kwargs["non_existent"][0]["username"], "jf")
-        self.assertEqual(kwargs["non_existent"][1]["username"], "root")
+        assert kwargs["mode"] == "multi"
+        assert len(kwargs["all"]) == 2
+        assert len(kwargs["existent"]) == 0
+        assert len(kwargs["non_existent"]) == 2
+        assert kwargs["non_existent"][0]["username"] == "jf"
+        assert kwargs["non_existent"][1]["username"] == "root"

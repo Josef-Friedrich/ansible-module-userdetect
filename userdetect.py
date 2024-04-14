@@ -14,12 +14,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import annotations
 
 __metaclass__ = type
 
+
 import pwd
-from typing import List, TypedDict
+from typing import Literal, Optional, TypedDict, Union, cast
 
 # import module snippets
 from ansible.module_utils.basic import AnsibleModule
@@ -139,9 +140,16 @@ class User(TypedDict, total=False):
     gid: int
     home: str
     shell: str
+    fallback: bool
+    mode: Literal["single", "multi"]
 
 
-def detect_user(name: str):
+class ModuleParams(TypedDict, total=False):
+    user: Union[list[str], str]
+    fallback: str
+
+
+def detect_user(name: str) -> User:
     result: User = {}
     result["username"] = name
     result["exists"] = False
@@ -168,20 +176,23 @@ def main():
         supports_check_mode=False,
     )
 
-    existent: List[User] = []
-    non_existent: List[User] = []
-    all = []
+    existent: list[User] = []
+    non_existent: list[User] = []
+    all: list[User] = []
 
-    userlist = None
-    if isinstance(module.params["user"], (list,)):
-        userlist = module.params["user"]
-    elif "," in module.params["user"]:
-        userlist = module.params["user"].split(",")
+    params: ModuleParams = cast(ModuleParams, module.params)
+
+    userlist: Optional[list[str]] = None
+    if "user" in params:
+        if isinstance(params["user"], (list,)):
+            userlist = module.params["user"]
+        elif "," in params["user"]:
+            userlist = params["user"].split(",")
 
     if userlist:
         for username in userlist:
             user = detect_user(username)
-            if user["exists"]:
+            if "exists" in user and user["exists"]:
                 existent.append(user)
             else:
                 non_existent.append(user)
@@ -198,7 +209,7 @@ def main():
     result["fallback"] = False
 
     if (
-        not result["exists"]
+        not ("exists" not in result or result["exists"])
         and "fallback" in module.params
         and module.params["fallback"]
     ):
