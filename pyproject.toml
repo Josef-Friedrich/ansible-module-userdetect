@@ -7,8 +7,12 @@ readme = "README.rst"
 license = "GPL-3.0-only"
 repository = "https://github.com/Josef-Friedrich/ansible-module-userdetect"
 classifiers = [
-    "Private :: Do not Upload",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3",
 ]
 
 [tool.poetry.dependencies]

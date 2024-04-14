@@ -1,3 +1,6 @@
+{{ badge.pypi }}
+{{ badge.github_workflow() }}
+
 ansible-module-userdetect
 =========================
 

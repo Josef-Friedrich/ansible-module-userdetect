@@ -1,3 +1,11 @@
+.. image:: http://img.shields.io/pypi/v/userdetect.svg
+    :target: https://pypi.org/project/userdetect
+    :alt: This package on the Python Package Index
+
+.. image:: https://github.com/Josef-Friedrich/ansible-module-userdetect/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/Josef-Friedrich/ansible-module-userdetect/actions/workflows/tests.yml
+    :alt: Tests
+
 ansible-module-userdetect
 =========================
 
