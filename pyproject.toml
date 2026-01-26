@@ -1,29 +1,36 @@
-[tool.poetry]
+[project]
 name = "userdetect"
 version = "0.1.0"
 description = "Ansible module to detect the existence of user(s) on UNIX operation systems. "
-authors = ["Josef Friedrich <josef@friedrich.rocks>"]
+authors = [{ name = "Josef Friedrich", email = "josef@friedrich.rocks" }]
+requires-python = ">=3.12,<4"
 readme = "README.rst"
 license = "GPL-3.0-only"
-repository = "https://github.com/Josef-Friedrich/ansible-module-userdetect"
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = ["ansible>=13"]
+
+[project.urls]
+Repository = "https://github.com/Josef-Friedrich/ansible-module-userdetect"
+
+[dependency-groups]
+dev = [
+    "pytest>=9",
+    "readme-patcher>=0,<1",
+    "ruff>=0.14.14",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-ansible = "^9"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8"
-readme-patcher = "^0"
-tox = "^4"
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.9.26,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "userdetect"
+module-root = ""
+namespace = true
