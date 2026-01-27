@@ -14,17 +14,11 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-dependencies = ["ansible>=13"]
+dependencies = ["ansible>=13.2.0"]
 
 [project.urls]
 Repository = "https://github.com/Josef-Friedrich/ansible-module-userdetect"
 
-[dependency-groups]
-dev = [
-    "pytest>=9",
-    "readme-patcher>=0,<1",
-    "ruff>=0.14.14",
-]
 
 [build-system]
 requires = ["uv_build>=0.9.26,<0.10.0"]
@@ -34,3 +28,8 @@ build-backend = "uv_build"
 module-name = "userdetect"
 module-root = ""
 namespace = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

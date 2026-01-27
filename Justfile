@@ -1,4 +1,4 @@
-all: test format lint type_check
+all: test format docs lint type_check
 
 test:
 	uv run --isolated --python=3.12 pytest -m "not (slow or gui)"
@@ -26,13 +26,16 @@ publish:
 	uv publish
 
 format:
-	uv run ruff check --select I --fix .
-	uv run ruff format
+	uv tool run ruff check --select I --fix .
+	uv tool run ruff format
+
+docs: docs_readme_patcher
+
+docs_readme_patcher:
+	uv tool run --isolated readme-patcher
 
 lint:
-	uv run ruff check
+	uv tool run ruff check
 
 type_check:
-	uv run mypy typings userdetect.py tests
-
-.PHONY: test install install_editable update upgrade build publish format docs lint pin_docs_requirements
+	uv tool run mypy typings userdetect.py tests
